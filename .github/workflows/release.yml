@@ -57,7 +57,7 @@ jobs:
       run: gem install fpm
       continue-on-error: true
     - name: Package
-      run: "fpm -s dir -t osxpkg -v ${TAG} --after-install installer/after_install.sh --before-remove installer/before_remove.sh --after-remove installer/before_remove.sh --prefix /opt/saveme -n saveme -C installer"
+      run: "fpm -s dir -t osxpkg -v ${TAG} --before-install installer/before_install.sh --after-install installer/after_install.sh --before-remove installer/before_remove.sh --after-remove installer/before_remove.sh --prefix /opt/saveme -n saveme -C installer"
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
