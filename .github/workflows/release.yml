@@ -1,0 +1,65 @@
+name: Release
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build-assets:
+    name: Build Installer
+    runs-on: macos-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - uses: actions/setup-ruby@v1
+      with:
+        ruby-version: '2.6'
+    - name: Setup python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+        architecture: x64
+    - name: set version
+      run: echo 'TAG='$(echo ${GITHUB_REF} | sed -e "s/refs\/tags\///g") >> $GITHUB_ENV
+    - name: Get short tag
+      id: tag_version
+      shell: bash
+      run: echo ::set-output name=version::$(echo ${GITHUB_REF} | sed -e "s/refs\/tags\///g")
+    - name: Install FPM
+      run: gem install fpm
+      continue-on-error: true
+    - name: Package
+      run: "fpm -s dir -t osxpkg -v ${TAG} --after-install installer/after_install.sh --before-remove installer/before_remove.sh --after-remove installer/before_remove.sh --prefix /opt/saveme -n saveme -C installer"
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: "${{ steps.tag_version.outputs.version }}"
+        release_name: "Release ${{ steps.tag_version.outputs.version }}"
+        draft: false
+        prerelease: false
+    - name: Upload Installer Release Asset
+      id: upload_installer_release_asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        
+        asset_path: "./saveme-${{ steps.tag_version.outputs.version }}.pkg"
+        asset_name: "saveme-${{ steps.tag_version.outputs.version }}.pkg"
+        asset_content_type: application/octet-stream
+    - name: Build
+      run: pip install twine wheel; python setup.py sdist bdist_wheel
+    - name: Upload Python Wheel Release Asset
+      id: upload_wheel_release_asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: "./dist/saveme-${{ steps.tag_version.outputs.version }}-py3-none-any.whl"
+        asset_name: "saveme-${{ steps.tag_version.outputs.version }}-py3-none-any.whl"
+        asset_content_type: application/octet-stream
