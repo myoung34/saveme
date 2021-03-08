@@ -1,0 +1,14 @@
+dist/
+build/
+*.zip
+*.egg-info
+.tox
+__pycache__
+*.xml
+.coverage
+*.sw[o-p]
+config.ini
+.venv
+.vscode
+nohup.out
+.idea

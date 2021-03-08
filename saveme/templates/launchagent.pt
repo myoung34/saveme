@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>local.aws_vault_server</string>
+    <key>EnvironmentVariables</key>
+    <dict>
+      <key>AWS_VAULT_KEYCHAIN_NAME</key>
+      <string>aws-vault</string>
+    </dict>
+    <key>KeepAlive</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>/var/log/aws_vault/server.log</string>
+    <key>StandardErrorPath</key>
+    <string>/var/log/aws_vault/server.errors.log</string>
+    <key>Program</key>
+    <string>/usr/local/bin/aws-vault</string>
+    <key>ProgramArguments</key>
+    <array>
+      <string>/usr/local/bin/aws-vault</string>
+      <string>exec</string>
+      <string>${profile}</string>
+      <string>--no-daemonize</string>
+      <string>--server</string>
+      <string>--debug</string>
+    </array>
+    <key>RunAtLoad</key>
+    <false/>
+  </dict>
+</plist>
