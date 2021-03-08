@@ -10,31 +10,16 @@ gen_requirements_dev:
 .PHONY: build test
 build: clean
 	fpm \
-	  -s python \
-	  -t tar \
-	  --depends altgraph \
-	  --depends chameleon \
-	  --depends click \
-	  --depends macholib \
-	  --depends modulegraph \
-	  --depends py2app \
-	  --depends pyobjc-core \
-	  --depends pyobjc-framework-cocoa \
-	  --depends rumps \
-	  --depends shellescape \
-	  --prefix /opt/foo \
-	  setup.py
-#    --depends 'altgraph==0.17' \
-#    --depends 'chameleon==3.9.0' \
-#    --depends 'click==7.1.2' \
-#    --depends 'macholib==1.14' \
-#    --depends 'modulegraph==0.18' \
-#    --depends 'py2app==0.23' \
-#    --depends 'pyobjc-core==7.1' \
-#    --depends 'pyobjc-framework-cocoa==7.1' \
-#    --depends 'rumps==0.3.0' \
-#    --depends 'shellescape==3.8.1' \
-#		--prefix /opt/foo \
+		-s dir \
+		-t osxpkg \
+		-v 0.0.2 \
+		--after-install installer/after_install.sh \
+		--before-remove installer/before_remove.sh \
+		--after-remove installer/before_remove.sh \
+		--prefix /opt/saveme \
+		-n saveme \
+		-C installer
+
 
 zip: build
 	@cd ./build/lib; \
@@ -48,6 +33,4 @@ run:
 		echo todo
 
 clean:
-	find . -name '*.egg-info' -exec rm -rf {} \;
-	find . -name '__pycache__' -exec rm -rf {} \;
-	rm *.tar || :
+	rm *.pkg || :

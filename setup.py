@@ -13,9 +13,9 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     py_modules=['saveme'],
-    version='0.0.1',
+    version='0.0.2',
     packages=find_packages(exclude=['tests*']),
-    package_data={'': ['*.pt', 'vendor']},
+    package_data={'': ['*.icns', '*.pt', 'vendor']},
     install_requires=[
       'altgraph==0.17',
       'chameleon==3.9.0',
