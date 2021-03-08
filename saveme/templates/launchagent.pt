@@ -11,10 +11,6 @@
     </dict>
     <key>KeepAlive</key>
     <true/>
-    <key>StandardOutPath</key>
-    <string>/var/log/aws_vault/server.log</string>
-    <key>StandardErrorPath</key>
-    <string>/var/log/aws_vault/server.errors.log</string>
     <key>Program</key>
     <string>/usr/local/bin/aws-vault</string>
     <key>ProgramArguments</key>

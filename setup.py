@@ -13,7 +13,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     py_modules=['saveme'],
-    version='0.0.2',
+    version='0.0.3',
     packages=find_packages(exclude=['tests*']),
     package_data={'': ['*.icns', '*.pt', 'vendor']},
     install_requires=[

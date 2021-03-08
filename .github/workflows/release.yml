@@ -5,8 +5,36 @@ on:
       - '*'
 
 jobs:
+  test:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        python-version: [ '3.6', '3.7', '3.8' ]
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Setup python
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+        architecture: x64
+    - name: Get short Python version
+      id: full-python-version
+      shell: bash
+      run: echo ::set-output name=version::$(python -c "import sys; print(f'py{sys.version_info.major}{sys.version_info.minor}')")
+    - name: install pre-reqs
+      run: pip install poetry pre-commit
+    - name: lint
+      run: pre-commit run --all-files
+    - name: Configure poetry
+      run: poetry config virtualenvs.in-project true
+    - name: Install dependencies
+      run: poetry install
+    - name: Run tox
+      run: poetry run tox -e ${{ steps.full-python-version.outputs.version }}
   build-assets:
     name: Build Installer
+    needs: [test]
     runs-on: macos-latest
     steps:
     - name: Checkout code
@@ -47,12 +75,17 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        
+
         asset_path: "./saveme-${{ steps.tag_version.outputs.version }}.pkg"
         asset_name: "saveme-${{ steps.tag_version.outputs.version }}.pkg"
         asset_content_type: application/octet-stream
-    - name: Build
+    - name: Build wheel
       run: pip install twine wheel; python setup.py sdist bdist_wheel
+    - name: upload to pypi
+      run: python -m twine upload dist/* --verbose
+      env:
+        TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
+        TWINE_PASSWORD : ${{ secrets.TWINE_PASSWORD }}
     - name: Upload Python Wheel Release Asset
       id: upload_wheel_release_asset
       uses: actions/upload-release-asset@v1

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "saveme"
-version = "0.0.2"
+version = "0.0.3"
 description = "OSX Menu Bar for AWS-Vault Metadata Server (via launchctl)"
 authors = ["Marcus Young <myoung34@my.apsu.edu>"]
 license = "MIT"
